@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <title>P 131</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+        <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+        <script src=" https://unpkg.com/ml5@latest/dist/ml5.min.js "></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body background="https://previews.123rf.com/images/yanukit/yanukit1905/yanukit190500001/122378784-wood-tabletop-counter-with-blur-gallery-living-room-background-with-spot-ligthing-for-display-produc.jpg">
+        <h1>Object To Be Detected: Ball</h1>
+        <br><br>
+        <h3 id="status" class="btn btn-danger"></h3>
+        <center>
+            <h3 id="status" class="btn btn-danger"></h3>
+            <h3 id="number_of_objects" class="btn btn-warning"></h3>
+            <button onclick="start()" class="btn btn-success" id="start_model">Start</button>
+        </center>
+        <script>
+            objects = [];
+            function draw() {
+                image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_5zYn33_ox0-4B_xhG2ddGuwGW-iyhb1iBg&usqp=CAU", 0, 0, 380, 380);
+
+                if(status != "") {
+                    objectDetector.detect(video, gotRestult);
+                    r = random(255);
+                    g = random(225);
+                    b = random(225);
+                    for(i = 0; i < objects.length; i++) {
+                        document.getElementById("status").innerHTML = "Ststus: Object Detected!";
+                        document.getElementById("number_of_objects").innerHTML = "Number of objects detected = " + objects.length;
+                        fill(r, g, b);
+                        percent = floor(objects[i].confidence * 100);
+                        text(objects[i].label + "" + percent + "%", objects[i].x, objects[i].y);
+                        noFill();
+                        stroke(r, g, b);
+                        rect(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
+                    }
+                }
+            }
+            function setup() {
+                canvas = createCanvas(380, 380);
+                canvas.center();
+            }
+            function start() {
+                objectDetector = ml5.objectDetector('cocossd', modelLoaded);
+                document.getElementById("status").innerHTML = "Ststus: Detecting object!";
+            }
+            function modelLoaded() {
+                console.log("cocoSSD is loaded!");
+                status = true;
+                objectDetector.detect(video, gotRestult);
+            }
+            function gotRestult(error, results) {
+                if(error) {
+                    console.error(error);
+                }
+                console.log(results);
+                objects = results;
+            }
+        </script>
+    </body>
+</html>
